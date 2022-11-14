@@ -6,17 +6,17 @@
 
 #define N 4194304
 
-#define CHECK(call)\
-{\
-	const cudaError_t error = call;\
-	if (error != cudaSuccess)\
-	{\
-		fprintf(stderr, "Error: %s:%d, ", __FILE__, __LINE__);\
-		fprintf(stderr, "code: %d, reason: %s\n", error,\
-				cudaGetErrorString(error));\
-		exit(EXIT_FAILURE);\
-	}\
-}
+#define CHECK(call)                                                \
+    {                                                              \
+        const cudaError_t error = call;                            \
+        if (error != cudaSuccess)                                  \
+        {                                                          \
+            fprintf(stderr, "Error: %s:%d, ", __FILE__, __LINE__); \
+            fprintf(stderr, "code: %d, reason: %s\n", error,       \
+                    cudaGetErrorString(error));                    \
+            exit(EXIT_FAILURE);                                    \
+        }                                                          \
+    }
 
 // includes CUDA
 #include <cuda_runtime.h>
@@ -34,7 +34,7 @@ __global__ void addVectorGpu(int numberElements, float *firstArray, float *secon
     }
 }
 
-void addVec(int numberElements, float *firstArray, float *secondArray, float *resultArray, bool useDevice=false)
+void addVec(int numberElements, float *firstArray, float *secondArray, float *resultArray, bool useDevice = false)
 {
     StopWatchInterface *timer = 0;
 
@@ -59,7 +59,7 @@ void addVec(int numberElements, float *firstArray, float *secondArray, float *re
         printf("****************************\n");
 
         // Host allocates memories on device
-		float *d_firstArray, *d_secondArray, *d_resultArray;
+        float *d_firstArray, *d_secondArray, *d_resultArray;
         size_t nBytes = numberElements * sizeof(float);
 
         CHECK(cudaMalloc(&d_firstArray, nBytes));
@@ -71,9 +71,8 @@ void addVec(int numberElements, float *firstArray, float *secondArray, float *re
         CHECK(cudaMemcpy(d_secondArray, secondArray, nBytes, cudaMemcpyHostToDevice));
 
         // Host invokes kernel function to add vectors on device
-		dim3 blockSize(512); // For simplicity, you can temporarily view blockSize as a number
-		dim3 gridSize((numberElements - 1) / blockSize.x + 1); // Similarity, view gridSize as a number
-
+        dim3 blockSize(512);                                   // For simplicity, you can temporarily view blockSize as a number
+        dim3 gridSize((numberElements - 1) / blockSize.x + 1); // Similarity, view gridSize as a number
 
         sdkCreateTimer(&timer);
         sdkStartTimer(&timer);
@@ -97,11 +96,10 @@ void addVec(int numberElements, float *firstArray, float *secondArray, float *re
     sdkDeleteTimer(&timer);
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
-    float *firstArray, *secondArray; // Input vectors
-    float *resultArray,*correctResultArray;  // Output vector
-
+    float *firstArray, *secondArray;         // Input vectors
+    float *resultArray, *correctResultArray; // Output vector
 
     // Allocate memories for in1, in2, out
     size_t nBytes = N * sizeof(float);
@@ -113,8 +111,8 @@ int main(int argc, char ** argv)
     // Input data into in1, in2
     for (int i = 0; i < N; i++)
     {
-    	firstArray[i] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    	secondArray[i] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        firstArray[i] = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+        secondArray[i] = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
     }
 
     // Add vectors (on host)
@@ -124,14 +122,13 @@ int main(int argc, char ** argv)
     addVec(N, firstArray, secondArray, resultArray, true);
 
     // Check correctness
-    for (int i = 0; i < N; i=-~i)
+    for (int i = 0; i < N; i = -~i)
     {
-    	if (resultArray[i] != correctResultArray[i])
-    	{
-    		printf("INCORRECT.\n");
-    		return 1;
-    	}
+        if (resultArray[i] != correctResultArray[i])
+        {
+            printf("INCORRECT.\n");
+            return 1;
+        }
     }
     printf("CORRECT.\n");
 }
-
