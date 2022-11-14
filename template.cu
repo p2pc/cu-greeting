@@ -114,7 +114,7 @@ void runTest(int argc, char **argv) {
   printf("Hello from CPU!\n");
 
   printDeviceInfo();
-  
+
   helloFromGPU<<<1, 64>>>(); // 1 group of 64 threads do this function in parallel
 
   StopWatchInterface *timer = 0;
@@ -136,8 +136,7 @@ void runTest(int argc, char **argv) {
   float *d_idata;
   checkCudaErrors(cudaMalloc((void **)&d_idata, mem_size));
   // copy host memory to device
-  checkCudaErrors(
-      cudaMemcpy(d_idata, h_idata, mem_size, cudaMemcpyHostToDevice));
+  checkCudaErrors(cudaMemcpy(d_idata, h_idata, mem_size, cudaMemcpyHostToDevice));
 
   // allocate device memory for result
   float *d_odata;
@@ -156,8 +155,7 @@ void runTest(int argc, char **argv) {
   // allocate mem for the result on host side
   float *h_odata = (float *)malloc(mem_size);
   // copy result from device to host
-  checkCudaErrors(cudaMemcpy(h_odata, d_odata, sizeof(float) * num_threads,
-                             cudaMemcpyDeviceToHost));
+  checkCudaErrors(cudaMemcpy(h_odata, d_odata, sizeof(float) * num_threads, cudaMemcpyDeviceToHost));
 
   sdkStopTimer(&timer);
   printf("Processing time: %f (ms)\n", sdkGetTimerValue(&timer));

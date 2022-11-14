@@ -320,10 +320,10 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-template.o:template.cu
+template.o:addvector_gpu.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-template_cpu.o:template_cpu.cpp
+template_cpu.o:addvector_cpu.cpp
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
 template: template.o template_cpu.o
