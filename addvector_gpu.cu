@@ -52,6 +52,7 @@ void addVec(int numberElements, float *firstArray, float *secondArray, float *re
         printf("****************************\n");
 
         // Host allocates memories on device
+        // Way 1:
         float *d_firstArray, *d_secondArray, *d_resultArray;
         size_t nBytes = numberElements * sizeof(float);
 
@@ -64,7 +65,7 @@ void addVec(int numberElements, float *firstArray, float *secondArray, float *re
         CHECK(cudaMemcpy(d_secondArray, secondArray, nBytes, cudaMemcpyHostToDevice));
 
         // Host invokes kernel function to add vectors on device
-        dim3 blockSize(512); // For simplicity, you can temporarily view blockSize as a number
+        dim3 blockSize(512);                                   // For simplicity, you can temporarily view blockSize as a number
         dim3 gridSize((numberElements - 1) / blockSize.x + 1); // Similarity, view gridSize as a number
 
         sdkCreateTimer(&timer);
@@ -94,11 +95,19 @@ int main(int argc, char **argv)
     float *firstArray, *secondArray;         // Input vectors
     float *resultArray, *correctResultArray; // Output vector
 
-    // Allocate memories for in1, in2, out
+    // Allocate memories for firstArray, secondArray, resultArray, correctResultArray
     size_t nBytes = N * sizeof(float);
+
+    // Allocate the host input vector A (the first vector)
     firstArray = reinterpret_cast<float *>(malloc(nBytes));
+
+    // Allocate the host input vector B (the second vector)
     secondArray = reinterpret_cast<float *>(malloc(nBytes));
+
+    // Allocate the host input vector C (the result vector)
     resultArray = reinterpret_cast<float *>(malloc(nBytes));
+
+    // Allocate the host input vector D (the correct vector which computed on host)
     correctResultArray = reinterpret_cast<float *>(malloc(nBytes));
 
     // Input data into in1, in2

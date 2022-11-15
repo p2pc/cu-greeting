@@ -25,7 +25,6 @@ int main(int argc, char **argv)
 
     printDeviceInfo();
     helloFromGPU<<<1, 64>>>(); // 1 group of 64 threads do this function in parallel
-    cudaDeviceReset(); // Force to print
+    cudaDeviceReset();         // Force to print
     return 0;
 }
-

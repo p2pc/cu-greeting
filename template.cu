@@ -55,7 +55,8 @@ extern "C" void computeGold(float *reference, float *idata,
 //! @param g_idata  input data in global memory
 //! @param g_odata  output data in global memory
 ////////////////////////////////////////////////////////////////////////////////
-__global__ void testKernel(float *g_idata, float *g_odata) {
+__global__ void testKernel(float *g_idata, float *g_odata)
+{
   // shared memory
   // the size is determined by the host application
   extern __shared__ float sdata[];
@@ -79,19 +80,19 @@ __global__ void testKernel(float *g_idata, float *g_odata) {
 
 __global__ void helloFromGPU()
 {
-    printf("Hello from GPU, threadId %d!\n", threadIdx.x);
-    printf("Goodbye from GPU, threadId %d!\n", threadIdx.x);
+  printf("Hello from GPU, threadId %d!\n", threadIdx.x);
+  printf("Goodbye from GPU, threadId %d!\n", threadIdx.x);
 }
 
 void printDeviceInfo()
 {
-    cudaDeviceProp devProv;
-    cudaGetDeviceProperties(&devProv, 0);
-    printf("**********GPU info**********\n");
-    printf("Name: %s\n", devProv.name);
-    printf("Compute capability: %d.%d\n", devProv.major, devProv.minor);
-    printf("GMEM: %zu byte\n", devProv.totalGlobalMem);
-    printf("****************************\n");
+  cudaDeviceProp devProv;
+  cudaGetDeviceProperties(&devProv, 0);
+  printf("**********GPU info**********\n");
+  printf("Name: %s\n", devProv.name);
+  printf("Compute capability: %d.%d\n", devProv.major, devProv.minor);
+  printf("GMEM: %zu byte\n", devProv.totalGlobalMem);
+  printf("****************************\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +103,8 @@ int main(int argc, char **argv) { runTest(argc, argv); }
 ////////////////////////////////////////////////////////////////////////////////
 //! Run a simple test for CUDA
 ////////////////////////////////////////////////////////////////////////////////
-void runTest(int argc, char **argv) {
+void runTest(int argc, char **argv)
+{
   bool bTestResult = true;
 
   printf("%s Starting...\n\n", argv[0]);
@@ -128,7 +130,8 @@ void runTest(int argc, char **argv) {
   float *h_idata = (float *)malloc(mem_size);
 
   // initalize the memory
-  for (unsigned int i = 0; i < num_threads; ++i) {
+  for (unsigned int i = 0; i < num_threads; ++i)
+  {
     h_idata[i] = (float)i;
   }
 
@@ -166,10 +169,13 @@ void runTest(int argc, char **argv) {
   computeGold(reference, h_idata, num_threads);
 
   // check result
-  if (checkCmdLineFlag(argc, (const char **)argv, "regression")) {
+  if (checkCmdLineFlag(argc, (const char **)argv, "regression"))
+  {
     // write file for regression test
     sdkWriteFile("./data/regression.dat", h_odata, num_threads, 0.0f, false);
-  } else {
+  }
+  else
+  {
     // custom output handling when no regression test running
     // in this case check if the result is equivalent to the expected solution
     bTestResult = compareData(reference, h_odata, num_threads, 0.0f, 0.0f);

@@ -9,37 +9,38 @@
 
 __global__ void my_first_kernel(float *x)
 {
-  int tid = threadIdx.x + blockDim.x*blockIdx.x;
+  int tid = threadIdx.x + blockDim.x * blockIdx.x;
 
   printf("[LOG] Thread ID: %d\n", tid);
 
-  x[tid] = (float) threadIdx.x;
+  x[tid] = (float)threadIdx.x;
 }
 
 int main(int argc, const char **argv)
 {
   float *x;
-  int   nblocks, nthreads, nsize, n;
+  int nblocks, nthreads, nsize, n;
 
   // initialise card
   findCudaDevice(argc, argv);
 
   // set number of blocks, and threads per block
-  nblocks  = 2;
+  nblocks = 2;
   nthreads = 8;
-  nsize    = nblocks*nthreads ;
+  nsize = nblocks * nthreads;
 
   // allocate memory for array
-  checkCudaErrors(cudaMallocManaged(&x, nsize*sizeof(float)));
+  checkCudaErrors(cudaMallocManaged(&x, nsize * sizeof(float)));
 
   // execute kernel
-  my_first_kernel<<<nblocks,nthreads>>>(x);
+  my_first_kernel<<<nblocks, nthreads>>>(x);
   getLastCudaError("my_first_kernel execution failed\n");
 
   // synchronize to wait for kernel to finish, and data copied back
   cudaDeviceSynchronize();
 
-  for (n=0; n<nsize; n++) printf(" n,  x  =  %d  %f \n",n,x[n]);
+  for (n = 0; n < nsize; n++)
+    printf(" n,  x  =  %d  %f \n", n, x[n]);
 
   // free memory
   checkCudaErrors(cudaFree(x));
