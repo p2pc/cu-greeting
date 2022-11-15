@@ -25,14 +25,7 @@
 
 extern "C" void addVectorCpu(int numberElements, float *firstArray, float *secondArray, float *resultArray);
 
-__global__ void addVectorGpu(int numberElements, float *firstArray, float *secondArray, float *resultArray)
-{
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i < numberElements)
-    {
-        resultArray[i] = firstArray[i] + secondArray[i];
-    }
-}
+extern "C" __global__ void addVectorGpu(int numberElements, float *firstArray, float *secondArray, float *resultArray);
 
 void addVec(int numberElements, float *firstArray, float *secondArray, float *resultArray, bool useDevice = false)
 {
@@ -71,7 +64,7 @@ void addVec(int numberElements, float *firstArray, float *secondArray, float *re
         CHECK(cudaMemcpy(d_secondArray, secondArray, nBytes, cudaMemcpyHostToDevice));
 
         // Host invokes kernel function to add vectors on device
-        dim3 blockSize(512);                                   // For simplicity, you can temporarily view blockSize as a number
+        dim3 blockSize(512); // For simplicity, you can temporarily view blockSize as a number
         dim3 gridSize((numberElements - 1) / blockSize.x + 1); // Similarity, view gridSize as a number
 
         sdkCreateTimer(&timer);
@@ -103,10 +96,10 @@ int main(int argc, char **argv)
 
     // Allocate memories for in1, in2, out
     size_t nBytes = N * sizeof(float);
-    firstArray = (float *)malloc(nBytes);
-    secondArray = (float *)malloc(nBytes);
-    resultArray = (float *)malloc(nBytes);
-    correctResultArray = (float *)malloc(nBytes);
+    firstArray = reinterpret_cast<float *>(malloc(nBytes));
+    secondArray = reinterpret_cast<float *>(malloc(nBytes));
+    resultArray = reinterpret_cast<float *>(malloc(nBytes));
+    correctResultArray = reinterpret_cast<float *>(malloc(nBytes));
 
     // Input data into in1, in2
     for (int i = 0; i < N; i++)
